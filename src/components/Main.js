@@ -4,7 +4,6 @@ import SearchResults from './SearchResults'
 
 function Main() {
     const path = window.location.pathname
-    const query = window.location.search
 
     if (path === '/') {
         return <Home />
