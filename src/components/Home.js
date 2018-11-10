@@ -3,7 +3,7 @@ import Search from './Search'
 
 class Home extends Component {
 
-    onKeyPress = (e) => {
+    onKeyPress = e => {
         const keyCode = e.keyCode || e.which
 
         if (keyCode === 13) {
