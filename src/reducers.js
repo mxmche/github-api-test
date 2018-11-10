@@ -14,6 +14,7 @@ function forks(state = {
       return Object.assign({}, state, {
         isFetching: false,
         items: action.forks,
+        link: action.params.link
       })
     default:
       return state

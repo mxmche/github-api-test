@@ -5,6 +5,11 @@ import { fetchForks } from '../actions'
 
 class SearchResults extends Component {
 
+    state = {
+        repository: '',
+        page: 1
+    }
+
     componentDidMount() {
         const searchQuery = window.location.search
         const { dispatch } = this.props
@@ -22,6 +27,11 @@ class SearchResults extends Component {
             }
         }
 
+        this.setState({
+            repository: queryParams.repository,
+            page: queryParams.page
+        })
+
         dispatch(fetchForks(queryParams))
     }
 
@@ -30,7 +40,7 @@ class SearchResults extends Component {
             <>
                 <h1>Results</h1>
 
-                <Search />
+                <Search onKeyPress={this.onKeyPress} />
 
                 {
                     this.props.isFetching ? 
@@ -39,6 +49,21 @@ class SearchResults extends Component {
                 }
             </>
         )
+    }
+
+    onKeyPress = e => {
+        const { dispatch } = this.props
+        const keyCode = e.keyCode || e.which
+
+        if (keyCode === 13) {
+            if (/^\S+\/\S+$/.test(e.target.value)) {
+                this.setState({
+                    repository: e.target.value,
+                    page: 1
+                })
+                dispatch(fetchForks({repository: e.target.value}))
+            }
+        }
     }
 
     renderTable(items) {
@@ -54,27 +79,53 @@ class SearchResults extends Component {
         })
 
         return (
-            <table>
-                <thead>
-                    <tr>
-                        <th>Full Name</th>
-                        <th>Owner</th>
-                        <th>Stars</th>
-                        <th>URL</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {rows}
-                </tbody>
-            </table>
+            <>
+                <div>
+                    {this.renderPaging()}
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Owner</th>
+                            <th>Stars</th>
+                            <th>URL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {rows}
+                    </tbody>
+                </table>
+            </>
         )
+    }
+
+    renderPaging() {
+        if (this.props.link) {
+            const pages = this.props.link.split(',')
+
+            return pages.map(page => {
+                const relMatch = page.match(/rel="(\S+)"/)
+                const pageNumber = page.match(/page=(\d+)/)[1]
+
+                return (
+                    <div style={{ float: 'left' }} key={relMatch[1]}>
+                        <a href={`/search?page=${pageNumber}&repository=${this.state.repository}`}>{pageNumber}</a>
+                        &nbsp;
+                    </div>
+                )
+            })
+        }
+
+        return null
     }
 }
 
 function mapStateToProps(state) {
     const {
       isFetching,
-      items
+      items,
+      link
     } = state.forks || {
       isFetching: true,
       items: []
@@ -82,7 +133,8 @@ function mapStateToProps(state) {
 
     return {
       items,
-      isFetching
+      isFetching,
+      link
     }
   }
 

@@ -28,7 +28,12 @@ export function fetchForks(params) {
     }
 
     return fetch(`https://api.github.com/repos/${params.repository}/forks${query}`)
-      .then(response => response.json())
-      .then(json => dispatch(receiveForks(params, json)))
+      .then(response => {
+        params.link = response.headers.get('Link')
+        return response.json()
+      })
+      .then(json => {
+        dispatch(receiveForks(params, json))
+      })
   }
 }
