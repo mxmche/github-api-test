@@ -10,7 +10,8 @@ class Home extends Component {
             const [ owner, repoName ] = e.target.value.split('/')
 
             if (/^\S+\/\S+$/.test(e.target.value)) {
-                window.location.href = `/search?repository=${owner}/${repoName}`
+                window.location.hash = `search?repository=${owner}/${repoName}&page=1`
+                this.props.changeView()
             }
         }
     }

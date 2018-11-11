@@ -10,13 +10,24 @@ class SearchResults extends Component {
         page: 1
     }
 
+    constructor(props) {
+        super(props)
+        this.onHashChange = this.onHashChange.bind(this)
+    }
+
     componentDidMount() {
-        const searchQuery = window.location.search
-        const { dispatch } = this.props
+        window.onhashchange = this.onHashChange
+    }
+
+    /**
+     * @returns {Object}
+     */
+    getQueryParams() {
+        const searchQuery = window.location.hash.replace(/#search\?/, '')
         const queryParams = {}
 
         if (searchQuery) {
-            const query = searchQuery.replace('?', '')
+            const query = searchQuery
             const params = query.split('&')
 
             if (params && params.length) {
@@ -27,12 +38,23 @@ class SearchResults extends Component {
             }
         }
 
-        this.setState({
-            repository: queryParams.repository,
-            page: queryParams.page
-        })
+        return queryParams
+    }
 
-        dispatch(fetchForks(queryParams))
+    onHashChange() {
+        const hash = window.location.hash.replace(/[#/]+/, '')
+
+        if (/search/.test(hash)) {
+            const { dispatch } = this.props
+            const queryParams = this.getQueryParams()
+
+            this.setState({
+                repository: queryParams.repository,
+                page: queryParams.page
+            })
+
+            dispatch(fetchForks(queryParams))
+        }
     }
 
     render() {

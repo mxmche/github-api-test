@@ -1,19 +1,34 @@
-import React from 'react'
+import React, { Component } from 'react'
 import Home from './Home'
 import SearchResults from './SearchResults'
 
-function Main() {
-    const path = window.location.pathname
+class Main extends Component {
 
-    if (path === '/') {
-        return <Home />
+    state = {
+        route: 'home'
     }
 
-    if (path === '/search') {
-        return <SearchResults />
+    componentDidMount() {
+        window.location.hash = ''
     }
 
-    return <div>Not Found</div>
+    changeView = () => {
+        this.setState({ route: 'search' })
+    }
+
+    render() {
+        const { route } = this.state
+
+        if (route === 'home') {
+            return <Home changeView={this.changeView} />
+        }
+
+        if (route === 'search') {
+            return <SearchResults />
+        }
+
+        return <div>Not Found</div>
+    }
 }
 
 export default Main
