@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { ButtonGroup, Button, Intent, Spinner } from "@blueprintjs/core"
 import Search from './Search'
 import { fetchForks } from '../actions'
 
@@ -42,10 +44,10 @@ class SearchResults extends Component {
     }
 
     onHashChange() {
+        const { dispatch } = this.props
         const hash = window.location.hash.replace(/[#/]+/, '')
 
         if (/search/.test(hash)) {
-            const { dispatch } = this.props
             const queryParams = this.getQueryParams()
 
             this.setState({
@@ -66,7 +68,7 @@ class SearchResults extends Component {
 
                 {
                     this.props.isFetching ? 
-                        <div>Loading...</div> : 
+                        <Spinner intent={Intent.PRIMARY} /> : 
                         this.renderTable(this.props.items)
                 }
             </>
@@ -74,17 +76,10 @@ class SearchResults extends Component {
     }
 
     onKeyPress = e => {
-        const { dispatch } = this.props
         const keyCode = e.keyCode || e.which
 
-        if (keyCode === 13) {
-            if (/^\S+\/\S+$/.test(e.target.value)) {
-                this.setState({
-                    repository: e.target.value,
-                    page: 1
-                })
-                dispatch(fetchForks({repository: e.target.value}))
-            }
+        if (keyCode === 13 && /^\S+\/\S+$/.test(e.target.value)) {
+            window.location.hash = `search?page=1&repository=${e.target.value}`
         }
     }
 
@@ -101,11 +96,11 @@ class SearchResults extends Component {
         })
 
         return (
-            <>
+            <div style={{ marginTop: '10px'}}>
                 <div>
                     {this.renderPaging()}
                 </div>
-                <table>
+                <table className="bp3-html-table" style={{ margin: '0 auto' }}>
                     <thead>
                         <tr>
                             <th>Full Name</th>
@@ -118,25 +113,45 @@ class SearchResults extends Component {
                         {rows}
                     </tbody>
                 </table>
-            </>
+            </div>
         )
     }
 
     renderPaging() {
-        if (this.props.link) {
-            const pages = this.props.link.split(',')
+        const { link } = this.props
+        const currentPage = this.state.page
 
-            return pages.map(page => {
-                const relMatch = page.match(/rel="(\S+)"/)
+        if (link) {
+            const pages = link.split(',')
+            let buttons = pages.map(page => {
+                const rel = page.match(/rel=\"(\S+)\"/)[1]
                 const pageNumber = page.match(/page=(\d+)/)[1]
+                const onClick = () => {
+                    window.location.hash = `search?page=${pageNumber}&repository=${this.state.repository}`
+                }
+                const title = rel === 'first' ? rel : pageNumber
 
-                return (
-                    <div style={{ float: 'left' }} key={relMatch[1]}>
-                        <a href={`/search?page=${pageNumber}&repository=${this.state.repository}`}>{pageNumber}</a>
-                        &nbsp;
-                    </div>
-                )
+                return <Button onClick={onClick} key={rel}>{title}</Button>
             })
+
+            if (currentPage == 1) {
+                buttons = [
+                    <Button key='current' disabled>{currentPage}</Button>,
+                    ...buttons
+                ]
+            } else {
+                buttons = [
+                    buttons[0],
+                    <Button key='current' disabled>{currentPage}</Button>,
+                    ...buttons.slice(1)
+                ]
+            }
+
+            return (
+                <ButtonGroup>
+                    {buttons}
+                </ButtonGroup>
+            )
         }
 
         return null
@@ -158,6 +173,10 @@ function mapStateToProps(state) {
       isFetching,
       link
     }
-  }
+}
+
+SearchResults.propTypes = {
+    link: PropTypes.string
+}
 
 export default connect(mapStateToProps)(SearchResults)
