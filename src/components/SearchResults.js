@@ -11,10 +11,6 @@ class SearchResults extends Component {
     constructor(props) {
         super(props)
         this.onHashChange = this.onHashChange.bind(this)
-        this.state = {
-            repository: '',
-            page: 1
-        }
     }
 
     componentDidMount() {
@@ -27,14 +23,7 @@ class SearchResults extends Component {
         const hash = window.location.hash.replace(/[#/]+/, '')
 
         if (/search/.test(hash)) {
-            const queryParams = getQueryParams()
-
-            this.setState({
-                repository: queryParams.repository,
-                page: Number(queryParams.page) 
-            })
-
-            dispatch(fetchForks(queryParams))
+            dispatch(fetchForks(getQueryParams()))
         }
     }
 
@@ -97,35 +86,30 @@ class SearchResults extends Component {
     }
 
     renderPaging() {
-        const { link } = this.props
-        const currentPage = this.state.page
+        const { link, repository, page } = this.props.params
 
         if (link) {
-            const pages = link.split(',')
-            let buttons = pages.map(page => {
-                const rel = page.match(/rel="(\S+)"/)[1]
-                const pageNumber = page.match(/page=(\d+)/)[1]
-                const onClick = () => {
-                    setUrl(pageNumber, this.state.repository)
-                }
+            let buttons = link.split(',').map(pageLink => {
+                const rel = pageLink.match(/rel="(\S+)"/)[1]
+                const pageNumber = pageLink.match(/page=(\d+)/)[1]
 
                 return (
-                    <Button onClick={onClick} key={rel}>
-                        {rel === 'first' ? rel : pageNumber}
+                    <Button onClick={() => setUrl(pageNumber, repository)} key={rel}>
+                        {rel === 'first' ? 1 : pageNumber}
                     </Button>
                 )
             })
 
-            if (currentPage === 1) {
+            if (page === 1) {
                 buttons = [
-                    <Button key='current' disabled>{currentPage}</Button>,
+                    <Button key='current' disabled>{page}</Button>,
                     ...buttons
                 ]
             } else {
                 buttons = [
-                    buttons[0],
-                    <Button key='current' disabled>{currentPage}</Button>,
-                    ...buttons.slice(1)
+                    buttons[buttons.length - 1],
+                    <Button key='current' disabled>{page}</Button>,
+                    ...buttons.slice(0, -1)
                 ]
             }
 
@@ -141,19 +125,21 @@ class SearchResults extends Component {
 }
 
 function mapStateToProps(state) {
+    console.log('mapStateToProps',state.forks)
     const {
       isFetching,
       items,
-      link
+      params
     } = state.forks || {
       isFetching: true,
-      items: []
+      items: [],
+      params: {}
     }
 
     return {
       items,
       isFetching,
-      link
+      params
     }
 }
 

@@ -1,10 +1,13 @@
 import { combineReducers } from 'redux'
 import { REQUEST_FORKS, RECEIVE_FORKS } from './actions'
 
-function forks(state = {
+const defaultState = {
   isFetching: false,
-  items: []
-}, action) {
+  items: [],
+  params: {}
+}
+
+function forks(state = defaultState, action) {
   switch (action.type) {
     case REQUEST_FORKS:
       return Object.assign({}, state, {
@@ -14,7 +17,7 @@ function forks(state = {
       return Object.assign({}, state, {
         isFetching: false,
         items: action.forks,
-        link: action.params.link
+        params: action.params
       })
     default:
       return state
