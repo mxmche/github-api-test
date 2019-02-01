@@ -28,9 +28,11 @@ class SearchResults extends Component {
     }
 
     render() {
+        const { repository } = this.props.params
+
         return (
             <>
-                <h1>Results</h1>
+                <h1>{repository ? `Search results of ${repository}` : 'Results'}</h1>
 
                 <Search onKeyPress={this.onKeyPress} />
 
@@ -58,7 +60,7 @@ class SearchResults extends Component {
                     <td>{item.full_name}</td>
                     <td>{item.owner.login}</td>
                     <td>{item.stargazers_count}</td>
-                    <td><a href={item.html_url}>{item.html_url}</a></td>
+                    <td><a href={item.html_url} target="_blank" rel="noopener noreferrer">{item.html_url}</a></td>
                 </tr>
             )
         })
