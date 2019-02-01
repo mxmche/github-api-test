@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Search from './Search'
+import { setUrl } from './utils'
 
 class Home extends Component {
 
@@ -9,7 +10,7 @@ class Home extends Component {
 
         if (keyCode === 13) {
             if (/^\S+\/\S+$/.test(e.target.value)) {
-                window.location.hash = `search?repository=${e.target.value}&page=1`
+                setUrl(1, e.target.value)
                 this.props.changeView()
             }
         }

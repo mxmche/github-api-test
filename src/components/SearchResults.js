@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { ButtonGroup, Button, Intent, Spinner } from "@blueprintjs/core"
 import Search from './Search'
 import { fetchForks } from '../actions'
+import { setUrl, getQueryParams } from './utils'
 
 class SearchResults extends Component {
 
@@ -21,34 +22,12 @@ class SearchResults extends Component {
         this.onHashChange()
     }
 
-    /**
-     * @returns {Object}
-     */
-    getQueryParams() {
-        const searchQuery = window.location.hash.replace(/#search\?/, '')
-        const queryParams = {}
-
-        if (searchQuery) {
-            const query = searchQuery
-            const params = query.split('&')
-
-            if (params && params.length) {
-                params.forEach((p) => {
-                    const [ key, value ] = p.split('=')
-                    queryParams[key] = value
-                })
-            }
-        }
-
-        return queryParams
-    }
-
     onHashChange() {
         const { dispatch } = this.props
         const hash = window.location.hash.replace(/[#/]+/, '')
 
         if (/search/.test(hash)) {
-            const queryParams = this.getQueryParams()
+            const queryParams = getQueryParams()
 
             this.setState({
                 repository: queryParams.repository,
@@ -79,7 +58,7 @@ class SearchResults extends Component {
         const keyCode = e.keyCode || e.which
 
         if (keyCode === 13 && /^\S+\/\S+$/.test(e.target.value)) {
-            window.location.hash = `search?page=1&repository=${e.target.value}`
+            setUrl(1, e.target.value)
         }
     }
 
@@ -124,17 +103,20 @@ class SearchResults extends Component {
         if (link) {
             const pages = link.split(',')
             let buttons = pages.map(page => {
-                const rel = page.match(/rel=\"(\S+)\"/)[1]
+                const rel = page.match(/rel="(\S+)"/)[1]
                 const pageNumber = page.match(/page=(\d+)/)[1]
                 const onClick = () => {
-                    window.location.hash = `search?page=${pageNumber}&repository=${this.state.repository}`
+                    setUrl(pageNumber, this.state.repository)
                 }
-                const title = rel === 'first' ? rel : pageNumber
 
-                return <Button onClick={onClick} key={rel}>{title}</Button>
+                return (
+                    <Button onClick={onClick} key={rel}>
+                        {rel === 'first' ? rel : pageNumber}
+                    </Button>
+                )
             })
 
-            if (currentPage == 1) {
+            if (currentPage === 1) {
                 buttons = [
                     <Button key='current' disabled>{currentPage}</Button>,
                     ...buttons
