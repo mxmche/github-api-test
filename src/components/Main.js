@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import Home from './Home'
 import SearchResults from './SearchResults'
 import { setUrl } from './utils'
 
@@ -15,10 +14,6 @@ class Main extends Component {
         }
     }
 
-    changeView = () => {
-        this.setState({ route: 'search' })
-    }
-
     onKeyPress = e => {
         const keyCode = e.keyCode || e.which
 
@@ -27,7 +22,7 @@ class Main extends Component {
             if (/^\S+\/\S+$/.test(e.target.value)) {
 
                 if (!/search/.test(window.location.href)) {
-                    this.changeView()
+                    this.setState({ route: 'search' })
                 }
 
                 setUrl(e.target.value, 1)
@@ -36,17 +31,12 @@ class Main extends Component {
     }
 
     render() {
-        const { route } = this.state
-
-        if (route === 'home') {
-            return <Home changeView={this.changeView} onKeyPress={this.onKeyPress} />
-        }
-
-        if (route === 'search') {
-            return <SearchResults onKeyPress={this.onKeyPress} />
-        }
-
-        return <div>Not Found</div>
+        return (
+            <SearchResults
+                route={this.state.route}
+                onKeyPress={this.onKeyPress}
+            />
+        )
     }
 }
 

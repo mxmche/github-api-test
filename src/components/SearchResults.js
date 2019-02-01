@@ -29,21 +29,45 @@ class SearchResults extends Component {
     }
 
     render() {
-        const { repository } = this.props.params
-
         return (
             <>
-                <h1>{repository ? `Search results of ${repository}` : 'Results'}</h1>
-
+                {this.renderTitle()}
                 <Search onKeyPress={this.props.onKeyPress} />
-
-                {
-                    this.props.isFetching ? 
-                        <Spinner intent={Intent.PRIMARY} /> : 
-                        <Table items={this.props.items} params={this.props.params} />
-                }
+                {this.renderTable()}
             </>
         )
+    }
+
+    renderTitle() {
+        const { route, params } = this.props
+        const { repository } = params
+        let title = ''
+
+        if (route === 'home') {
+            title = 'Home'
+        } else {
+            if (repository) {
+                title = `Search results of ${repository}`
+            } else {
+                title = 'Results'
+            }
+        }
+
+        return <h1>{title}</h1>
+    }
+
+    renderTable() {
+        const { route, isFetching, params, items } = this.props
+
+        if (route === 'search') {
+            if (isFetching) {
+                return <Spinner intent={Intent.PRIMARY} />
+            } else {
+                return <Table items={items} params={params} />
+            }
+        }
+
+        return null
     }
 }
 
