@@ -1,4 +1,4 @@
-import fetch from 'isomorphic-fetch'
+import { searchForks } from './api'
 
 export const REQUEST_FORKS = 'REQUEST_FORKS'
 export const RECEIVE_FORKS = 'RECEIVE_FORKS'
@@ -20,14 +20,10 @@ function receiveForks(params, json) {
 
 export function fetchForks(params) {
   return dispatch => {
+
     dispatch(requestForks(params))
 
-    let query = ''
-    if (params.page) {
-      query = `?page=${params.page}`
-    }
-
-    return fetch(`https://api.github.com/repos/${params.repository}/forks${query}`)
+    return searchForks(params.repository, params.page)
       .then(response => {
         params.link = response.headers.get('Link')
         return response.json()
