@@ -16,3 +16,16 @@
 .App-link {
   color: #61dafb;
 }
+
+.fork-paging {
+  margin-top: 10px;
+}
+
+.fork-table {
+  margin: 0 auto;
+}
+
+.fork-search_input {
+  width: 300px;
+  margin: 0 auto;
+}

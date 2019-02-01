@@ -66,11 +66,11 @@ class SearchResults extends Component {
         })
 
         return (
-            <div style={{ marginTop: '10px'}}>
+            <div className='fork-paging'>
                 <div>
                     {this.renderPaging()}
                 </div>
-                <table className="bp3-html-table" style={{ margin: '0 auto' }}>
+                <table className="bp3-html-table fork-table">
                     <thead>
                         <tr>
                             <th>Full Name</th>
@@ -127,7 +127,6 @@ class SearchResults extends Component {
 }
 
 function mapStateToProps(state) {
-    console.log('mapStateToProps',state.forks)
     const {
       isFetching,
       items,
