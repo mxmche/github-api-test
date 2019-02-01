@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { Intent, Spinner } from '@blueprintjs/core'
 import Search from './Search'
 import { fetchForks } from '../actions'
-import { setUrl, getQueryParams } from './utils'
+import { getQueryParams } from './utils'
 import Table from './Table'
 
 class SearchResults extends Component {
@@ -35,7 +35,7 @@ class SearchResults extends Component {
             <>
                 <h1>{repository ? `Search results of ${repository}` : 'Results'}</h1>
 
-                <Search onKeyPress={this.onKeyPress} />
+                <Search onKeyPress={this.props.onKeyPress} />
 
                 {
                     this.props.isFetching ? 
@@ -44,14 +44,6 @@ class SearchResults extends Component {
                 }
             </>
         )
-    }
-
-    onKeyPress = e => {
-        const keyCode = e.keyCode || e.which
-
-        if (keyCode === 13 && /^\S+\/\S+$/.test(e.target.value)) {
-            setUrl(1, e.target.value)
-        }
     }
 }
 
