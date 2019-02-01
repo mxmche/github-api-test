@@ -66,7 +66,13 @@ function mapStateToProps(state) {
 }
 
 SearchResults.propTypes = {
-    link: PropTypes.string
+    items: PropTypes.array,
+    isFetching: PropTypes.bool,
+    params: PropTypes.shape({
+        link: PropTypes.string,
+        repository: PropTypes.string,
+        page: PropTypes.string
+    })
 }
 
 export default connect(mapStateToProps)(SearchResults)

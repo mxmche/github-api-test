@@ -2,7 +2,7 @@
  * @param {Number} page Page number of fork list
  * @param {*} repo A repository name
  */
-const setUrl = (page, repo) => {
+const setUrl = (repo, page) => {
     window.location.hash = `search?page=${page}&repository=${repo}`
 }
 

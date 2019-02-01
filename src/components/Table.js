@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { ButtonGroup, Button } from '@blueprintjs/core'
 import { setUrl } from './utils'
 
@@ -41,27 +42,28 @@ class Table extends Component {
         const { link, repository, page } = this.props.params
 
         if (link) {
+            const pageNum = Number(page)
             let buttons = link.split(',').map(pageLink => {
                 const rel = pageLink.match(/rel="(\S+)"/)[1]
                 const pageNumber = pageLink.match(/page=(\d+)/)[1]
 
                 return (
-                    <Button onClick={() => setUrl(pageNumber, repository)} key={rel}>
-                        {rel === 'first' ? 1 : pageNumber}
+                    <Button onClick={() => setUrl(repository, pageNumber)} key={rel}>
+                        {rel === 'first' ? rel : pageNumber}
                     </Button>
                 )
             })
 
-            if (page === 1) {
+            if (pageNum === 1) {
                 buttons = [
-                    <Button key='current' disabled>{page}</Button>,
+                    <Button key='current' disabled>{pageNum}</Button>,
                     ...buttons
                 ]
             } else {
                 buttons = [
-                    buttons[buttons.length - 1],
-                    <Button key='current' disabled>{page}</Button>,
-                    ...buttons.slice(0, -1)
+                    buttons[0],
+                    <Button key='current' disabled>{pageNum}</Button>,
+                    ...buttons.slice(1)
                 ]
             }
 
@@ -74,6 +76,15 @@ class Table extends Component {
 
         return null
     }
+}
+
+Table.propTypes = {
+    items: PropTypes.array,
+    params: PropTypes.shape({
+        link: PropTypes.string,
+        repository: PropTypes.string,
+        page: PropTypes.string
+    })
 }
 
 export default Table

@@ -15,7 +15,7 @@ class Search extends Component {
 }
 
 Search.propTypes = {
-    onKeyPress: PropTypes.func
+    onKeyPress: PropTypes.func.isRequired
 }
 
 export default Search

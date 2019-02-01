@@ -30,7 +30,7 @@ class Main extends Component {
                     this.changeView()
                 }
 
-                setUrl(1, e.target.value)
+                setUrl(e.target.value, 1)
             }
         }
     }

@@ -1,21 +1,13 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import React from 'react'
 import Search from './Search'
 
-class Home extends Component {
-
-    render() {
-        return (
-            <>
-                <h1>Welcome</h1>
-                <Search onKeyPress={this.props.onKeyPress} />
-            </>
-        )
-    }
-}
-
-Home.propTypes = {
-    changeView: PropTypes.func
+function Home(props) {
+    return (
+        <>
+            <h1>Welcome</h1>
+            <Search onKeyPress={props.onKeyPress} />
+        </>
+    )
 }
 
 export default Home
