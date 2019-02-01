@@ -9,7 +9,9 @@ class Main extends Component {
     }
 
     componentDidMount() {
-        window.location.hash = ''
+        if (/search/.test(window.location.hash)) {
+            this.setState({ route: 'search' })
+        }
     }
 
     changeView = () => {

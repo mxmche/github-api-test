@@ -7,18 +7,18 @@ import { fetchForks } from '../actions'
 
 class SearchResults extends Component {
 
-    state = {
-        repository: '',
-        page: 1
-    }
-
     constructor(props) {
         super(props)
         this.onHashChange = this.onHashChange.bind(this)
+        this.state = {
+            repository: '',
+            page: 1
+        }
     }
 
     componentDidMount() {
         window.onhashchange = this.onHashChange
+        this.onHashChange()
     }
 
     /**
@@ -52,7 +52,7 @@ class SearchResults extends Component {
 
             this.setState({
                 repository: queryParams.repository,
-                page: queryParams.page
+                page: Number(queryParams.page) 
             })
 
             dispatch(fetchForks(queryParams))
